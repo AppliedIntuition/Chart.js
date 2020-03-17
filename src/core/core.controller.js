@@ -506,6 +506,29 @@ helpers.extend(Chart.prototype, /** @lends Chart */ {
 		}
 	},
 
+	updatePluginsOnly: function() {
+		var me = this;
+
+		plugins._invalidate(me);
+
+		if (plugins.notify(me, 'beforeUpdate') === false) {
+			return;
+		}
+
+		plugins.notify(me, 'afterScaleUpdate');
+		plugins.notify(me, 'afterLayout');
+		plugins.notify(me, 'afterUpdate');
+
+		if (me._bufferedRender) {
+			me._bufferedRequest = {
+				duration: 0,
+				lazy: arguments[1]
+			};
+		} else {
+			me.render(0);
+		}
+	},
+
 	/**
 	 * Updates the chart layout unless a plugin returns `false` to the `beforeLayout`
 	 * hook, in which case, plugins will not be called on `afterLayout`.
